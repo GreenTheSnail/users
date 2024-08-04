@@ -24,6 +24,22 @@ import java.util.UUID
 @RequestMapping("/users")
 class UserController(private val userService: UserService) {
 
+    @GetMapping("/test_data_init")
+    fun init(): String {
+        listOf(
+            UserCreationEnvelope(name = "Alice Johnson", username = "alice_j", password = "password123"),
+            UserCreationEnvelope(name = "Bob Smith", username = "bob_s", password = "passw0rd!"),
+            UserCreationEnvelope(name = "Charlie Brown", username = "charlie_b", password = "P@ssw0rd"),
+            UserCreationEnvelope(name = "Diana Prince", username = "diana_p", password = "WonderW0man"),
+            UserCreationEnvelope(name = "Eve Adams", username = "eve_a", password = "Ev3ryS3cr3t")
+        ).forEach { user ->
+            if (userService.getUserByUsername(user.username) == null) {
+                userService.createUser(user)
+            }
+        }
+        return "success"
+    }
+
     @GetMapping
     fun getAllUsers(): List<User> = userService.getAllUsers()
 

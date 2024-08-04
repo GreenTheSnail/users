@@ -1,3 +1,6 @@
+### Initialize test data
+GET http://localhost:8080/users/test_data_init
+
 ### Create user
 POST http://localhost:8080/users
 Content-Type: application/json
