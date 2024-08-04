@@ -5,7 +5,11 @@ import com.moro.users.model.UserUpdateEnvelope
 import com.moro.users.model.entity.User
 import com.moro.users.service.UserService
 import jakarta.validation.Valid
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -38,20 +42,39 @@ class UserController(private val userService: UserService) {
 
     @PutMapping("/{id}")
     fun updateUser(@PathVariable id: UUID, @RequestBody @Valid updatedUser: UserUpdateEnvelope): ResponseEntity<User> {
-        val user = userService.updateUser(id, updatedUser)
-        return if (user != null) {
-            ResponseEntity.ok(user)
+        val currentUser = getCurrentUser()
+        val user = userService.getUserById(id)
+        return if (currentUser.id != user?.id) {
+            ResponseEntity.status(HttpStatus.FORBIDDEN).build()
         } else {
-            ResponseEntity.notFound().build()
+            val updated = userService.updateUser(id, updatedUser)
+            if (updated != null) {
+                ResponseEntity.ok(updated)
+            } else {
+                ResponseEntity.notFound().build()
+            }
         }
     }
 
     @DeleteMapping("/{id}")
     fun deleteUser(@PathVariable id: UUID): ResponseEntity<Void> {
-        return if (userService.deleteUser(id)) {
-            ResponseEntity.noContent().build()
+        val currentUser = getCurrentUser()
+        val user = userService.getUserById(id)
+        return if (currentUser.id != user?.id) {
+            ResponseEntity.status(HttpStatus.FORBIDDEN)
         } else {
-            ResponseEntity.notFound().build()
-        }
+            if (userService.deleteUser(id)) {
+                ResponseEntity.noContent()
+            } else {
+                ResponseEntity.notFound()
+            }
+        }.build()
+    }
+
+    private fun getCurrentUser(): User {
+        val authentication: Authentication = SecurityContextHolder.getContext().authentication
+        val username = (authentication.principal as UserDetails).username
+        return userService.getUserByUsername(username)
+            ?: throw RuntimeException("Current user not found")
     }
 }

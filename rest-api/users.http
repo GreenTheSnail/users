@@ -21,7 +21,7 @@ GET http://localhost:8080/users/{{userId}}
 Content-Type: application/json
 
 ### Update user by id
-PUT http://localhost:8080/users/{{userId}}
+PUT http://localhost:8080/users/883c6d92-9ef3-4182-aa82-67360db7454a
 Content-Type: application/json
 
 {
