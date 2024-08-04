@@ -25,9 +25,11 @@ To deploy this project, run
   docker compose up -d
 ```
 It will create a PostgreSql database container.
+
 Then you can use the GET endpoint /users/test_data_init to create test users.
 
-Only the PUT and DELETE endpoints require username and password authentication, so the user can only modify or delete himself. 
+Only the PUT and DELETE endpoints require username and password authentication, so the user can only modify or delete himself.
+
 One of the next steps in application development is to create a user with the role ADMIN and give him rights to all endpoints and secure not secured endpoints.
 
 ## P.S.
