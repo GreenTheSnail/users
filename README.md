@@ -11,7 +11,7 @@ Project to create, read, update and delete users (test for MoroSystems).
 
 **Security:** Spring Security
 
-**Application server:** Tomcat(Spring framework)
+**Application server:** Tomcat (Spring framework)
 
 **Database:** PostgreSql (Docker)
 
